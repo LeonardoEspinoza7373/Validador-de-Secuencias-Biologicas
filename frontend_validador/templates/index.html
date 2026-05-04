@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validador de Secuencias Biológicas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+</head>
+<body>
+    <div class="contenedor-principal">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-contenido">
+                <h1>🧬 Validador de Secuencias Biológicas</h1>
+                <p>Valida ORFs (Open Reading Frames) en secuencias de ADN</p>
+            </div>
+        </header>
+
+        <!-- Tabs para elegir método de entrada -->
+        <div class="tabs-contenedor">
+            <button class="tab-boton activo" data-tab="archivo">
+                📁 Cargar Archivo FASTA
+            </button>
+            <button class="tab-boton" data-tab="manual">
+                ✏️ Ingresar Secuencia
+            </button>
+        </div>
+
+        <!-- Sección de carga de archivo -->
+        <section id="tab-archivo" class="seccion-carga tab-contenido activo">
+            <div class="caja-carga">
+                <h2>Cargar archivo FASTA</h2>
+                <div class="area-dropzone" id="dropzone">
+                    <input type="file" id="archivo-input" accept=".fasta,.fa,.fna,.txt" hidden>
+                    <p class="icono-upload">📁</p>
+                    <p class="texto-principal">Arrastra tu archivo FASTA aquí</p>
+                    <p class="texto-secundario">o haz clic para seleccionar</p>
+                    <p class="formatos">Formatos: .fasta, .fa, .fna, .txt</p>
+                </div>
+                <div id="nombre-archivo" class="nombre-archivo"></div>
+                <button id="btn-validar" class="boton-principal" disabled>
+                    Validar Secuencias
+                </button>
+            </div>
+        </section>
+
+        <!-- Sección de entrada manual -->
+        <section id="tab-manual" class="seccion-manual tab-contenido" style="display: none;">
+            <div class="caja-manual">
+                <h2>Validar Secuencia Individual</h2>
+                <div class="formulario-secuencia">
+                    <div class="campo-formulario">
+                        <label for="nombre-secuencia">Nombre de la secuencia:</label>
+                        <input 
+                            type="text" 
+                            id="nombre-secuencia" 
+                            placeholder="ej: ORF_001, mi_secuencia_dna"
+                            class="input-texto"
+                        >
+                    </div>
+
+                    <div class="campo-formulario">
+                        <label for="secuencia-entrada">Secuencia de ADN:</label>
+                        <textarea 
+                            id="secuencia-entrada" 
+                            class="textarea-secuencia" 
+                            placeholder="ATGAAATAA&#10;Ingresa solo los caracteres A, T, G, C (sin espacios)"
+                            rows="8"
+                        ></textarea>
+                        <div class="info-secuencia">
+                            <span id="longitud-secuencia">Longitud: 0 nucleótidos</span>
+                            <span id="caracteres-invalidos" class="error" style="display: none;"></span>
+                        </div>
+                    </div>
+
+                    <button id="btn-validar-manual" class="boton-principal">
+                        Validar Secuencia
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Indicador de carga -->
+        <div id="indicador-carga" class="indicador-carga" style="display: none;">
+            <div class="spinner"></div>
+            <p>Procesando archivo...</p>
+        </div>
+
+        <!-- Sección de resultados -->
+        <section id="seccion-resultados" class="seccion-resultados" style="display: none;">
+            <div class="resumen-validacion">
+                <h2>Resumen de Validación</h2>
+                <div class="estadisticas">
+                    <div class="estadistica">
+                        <span class="numero" id="total-registros">0</span>
+                        <span class="etiqueta">Registros procesados</span>
+                    </div>
+                    <div class="estadistica">
+                        <span class="numero valido" id="total-validas">0</span>
+                        <span class="etiqueta">ORFs válidas</span>
+                    </div>
+                    <div class="estadistica">
+                        <span class="numero invalido" id="total-invalidas">0</span>
+                        <span class="etiqueta">ORFs inválidas</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Listado de resultados -->
+            <div class="listado-resultados">
+                <div class="controles-listado">
+                    <h2>Resultados Detallados</h2>
+                    <div class="filtros">
+                        <button class="boton-filtro activo" data-filtro="todos">
+                            Todos
+                        </button>
+                        <button class="boton-filtro" data-filtro="validas">
+                            ✓ Válidas
+                        </button>
+                        <button class="boton-filtro" data-filtro="invalidos">
+                            ✗ Inválidas
+                        </button>
+                    </div>
+                </div>
+
+                <div id="contenedor-resultados" class="contenedor-resultados"></div>
+            </div>
+        </section>
+
+        <!-- Sección de error -->
+        <div id="seccion-error" class="seccion-error" style="display: none;">
+            <div class="caja-error">
+                <p class="titulo-error">⚠️ Error</p>
+                <p id="mensaje-error"></p>
+                <button class="boton-secundario" onclick="location.reload()">
+                    Intentar de nuevo
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para detalles -->
+    <div id="modal" class="modal" style="display: none;">
+        <div class="modal-contenido">
+            <button class="modal-cerrar" id="btn-cerrar-modal">&times;</button>
+            <div id="modal-cuerpo" class="modal-cuerpo"></div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/validador.js') }}"></script>
+</body>
+</html>
